@@ -1,5 +1,5 @@
 # discourse_script
-Given a date range, returns the reports of those days in a JSON format. Reverse engineered undocumented Discourse API methods to access those reports.
+Given a date range, returns the reports of those days in a JSON format. The reports are accessed by reverse engineering the undocumented Discourse API methods.  
 
 # How to run
 * Clone to repository.
