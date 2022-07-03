@@ -279,9 +279,7 @@ class DiscourseClient(object):
             "Api-Username": self.api_username,
         }
 
-        # How many times should we retry if rate limited
         retry_count = 4
-        # Extra time (on top of that required by API) to wait on a retry.
         retry_backoff = 1
 
         while retry_count > 0:
@@ -313,11 +311,10 @@ class DiscourseClient(object):
 
                 if 400 <= response.status_code < 500:
                     if 429 == response.status_code:
-                        # This codepath relies on wait_seconds from Discourse v2.0.0.beta3 / v1.9.3 or higher.
                         rj = response.json()
                         wait_delay = (
                             retry_backoff + rj["extras"]["wait_seconds"]
-                        )  # how long to back off for.
+                        )  
 
                         if retry_count > 1:
                             time.sleep(wait_delay)
@@ -332,7 +329,6 @@ class DiscourseClient(object):
                     else:
                         raise DiscourseClientError(msg, response=response)
 
-                # Any other response.ok resulting in False
                 raise DiscourseServerError(msg, response=response)
 
         if retry_count == 0:
@@ -349,9 +345,8 @@ class DiscourseClient(object):
         json_content = "application/json; charset=utf-8"
         content_type = response.headers["content-type"]
         if content_type != json_content:
-            # some calls return empty html documents
             if not response.content.strip():
-                return None
+                return None"
 
             raise DiscourseError(
                 'Invalid Response, expecting "{0}" got "{1}"'.format(
@@ -365,9 +360,6 @@ class DiscourseClient(object):
         except ValueError:
             raise DiscourseError("failed to decode response", response=response)
 
-        # Checking "errors" length because
-        # data-explorer (e.g. POST /admin/plugins/explorer/queries/{}/run)
-        # sends an empty errors array
         if "errors" in decoded and len(decoded["errors"]) > 0:
             message = decoded.get("message")
             if not message:
